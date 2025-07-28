@@ -7,7 +7,7 @@ export default function App() {
   return (
   <div className="bg-[#cad3ff]">
     {/* {Header} */}
-    <Header/>
+
     {/* {Hero} */}
     <Hero/>
 

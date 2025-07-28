@@ -27,7 +27,7 @@ function Header() {
     const [isMenuOpen,setIsMenuOpen]=useState(false);
     const {user,isSignedIn}=useUser();
   return (
-    <Navbar maxWidth='full' onMenuOpenChange={{setIsMenuOpen}}>
+    <Navbar maxWidth='full'  onMenuOpenChange={{setIsMenuOpen}}>
         <NavbarContent>
             <NavbarMenuToggle arial-label={isMenuOpen ? "Close Menu":"Close Menu"} className='sm:hidden'/>
             <NavbarBrand>
