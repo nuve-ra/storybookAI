@@ -6,6 +6,13 @@ import AgeGroup from './_components/AgeGroup';
 import ImageStyle from './_components/ImageStyle';
 import { Button } from '@heroui/button';
 import { chatSession } from '@/config/Geminiai';
+import { StoryData } from '@/config/schema';
+import { saveStoryToDB } from '@/app/actions/saveStory';
+import CustomLoader from './_components/CustomLoader';
+
+//import { db } from '@/config/db';
+// @ts-ignore
+import uuid4 from "uuid4";
 
 const CREATE_STORY_PROMPT = process.env.NEXT_PUBLIC_CREATE_STORY_PROMPT ?? 
   'Create kids story on description for {ageGroup} kids, {storyType} story and all images in {imageStyle} style, {storySubject}. Give me 5 chapters with detailed text, image prompt of each chapter, and also give me the image of story cover book with title, all in min JSON field format.';
@@ -49,11 +56,38 @@ function CreateStory() {
       console.log('Final Prompt:', FINAL_PROMPT);
       const result = await chatSession.sendMessage(FINAL_PROMPT)
       console.log(result?.response.text());
+      const resp=await SaveInDB(result?.response.text());
+      console.log(resp);
     }catch(error){
       console.error('Error generating story:', error);
     }
+    //Save database
   }
+  // const SaveInDB=async(output:string)=>{
+  //   const recordId=uuid4();
+  //   try{ 
+  //     const result=await db.insert(StoryData).values({
+  //     storyId:recordId,
+  //     ageGroup:formData?.ageGroup ?? '',
+  //     storyType:formData?.storyType ?? '',
+  //     storySubject:formData?.storySubject ?? '',
+  //     imageStyle:formData?.imageStyle ?? '',
+  //     output: JSON.parse(output),
+  //   }).returning({storyId:StoryData?.storyId})
+  //   return result;
+  //   }
+  //   catch(e){
 
+  //   }
+  // }
+  const SaveInDB=async(output:string)=>{
+    try{
+      const result = await saveStoryToDB(formData, output);
+      return result;
+    }catch(error){
+      console.error('Error saving story to DB:', error);
+    }
+  }
   return (
     <div className='p-10 md:px-20 lg:px-40 bg-[#cad3ff] min-h-screen'>
       <h2 className='text-extrabold text-[70px] text-primary text-center'>CREATE YOUR STORY</h2>
@@ -71,6 +105,7 @@ function CreateStory() {
           Generate Story
         </Button>
       </div>
+      <CustomLoader/>
     </div>
   );
 }

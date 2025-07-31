@@ -1,3 +1,4 @@
+"use client";
 import { Textarea } from '@heroui/input'
 import { input } from '@heroui/theme'
 import React from 'react'
