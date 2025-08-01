@@ -9,10 +9,12 @@ import { chatSession } from '@/config/Geminiai';
 import { StoryData } from '@/config/schema';
 import { saveStoryToDB } from '@/app/actions/saveStory';
 import CustomLoader from './_components/CustomLoader';
+import  axios  from 'axios';
 
 //import { db } from '@/config/db';
 // @ts-ignore
 import uuid4 from "uuid4";
+import replicate from 'replicate';
 
 const CREATE_STORY_PROMPT = process.env.NEXT_PUBLIC_CREATE_STORY_PROMPT ?? 
   'Create kids story on description for {ageGroup} kids, {storyType} story and all images in {imageStyle} style, {storySubject}. Give me 5 chapters with detailed text, image prompt of each chapter, and also give me the image of story cover book with title, all in min JSON field format.';
@@ -46,6 +48,7 @@ function CreateStory() {
   };
 
   const generateStory=async()=>{
+    setLoading(true);
     const FINAL_PROMPT = CREATE_STORY_PROMPT
        .replace('{ageGroup}', formData?.ageGroup ?? '')
        .replace('{storyType}', formData?.storyType ?? '')
@@ -55,39 +58,67 @@ function CreateStory() {
     try{
       console.log('Final Prompt:', FINAL_PROMPT);
       const result = await chatSession.sendMessage(FINAL_PROMPT)
-      console.log(result?.response.text());
-      const resp=await SaveInDB(result?.response.text());
-      console.log(resp);
+      const story=JSON.parse(result?.response.text());
+      
+      console.log('Generated story:', story);
+      
+      // Check story structure and extract title safely
+      const storyTitle = story?.story_cover?.title || story?.title || story?.story_title || 'Untitled Story';
+      const storyImagePrompt = story?.story_cover?.image_prompt || story?.cover_image_prompt || 'A beautiful children\'s book cover';
+      
+      console.log('Story title:', storyTitle);
+      console.log('Story image prompt:', storyImagePrompt);
+      
+      // Generate cover image
+      const imagePrompt = `Add text with title "${storyTitle}" in bold text for book cover. ${storyImagePrompt}`;
+      console.log('Image prompt:', imagePrompt);
+
+      const imageResp = await axios.post("/api/generate-image", {
+        prompt: imagePrompt
+      });
+
+      console.log("Image response:", imageResp?.data);
+      
+      if (imageResp?.data?.imageUrl) {
+        console.log('Image generated successfully!');
+        // Store the image URL in the story object
+        if (!story.story_cover) story.story_cover = {};
+        story.story_cover.image_url = imageResp.data.imageUrl;
+        
+        // Show the image URL to the user
+        const imageUrl = imageResp.data.imageUrl;
+        alert(`Story and image generated successfully!\n\nImage URL: ${imageUrl}\n\nYou can copy this URL to view the generated image.`);
+        
+        // Also log it for easy copying
+        console.log('Generated Image URL:', imageUrl);
+        
+        // Try to open the image in a new tab
+        window.open(imageUrl, '_blank');
+      } else {
+        alert('Story generated successfully, but image generation failed. Check console for details.');
+      }
+
+      console.log('Story with image:', story);
+      const resp=await SaveInDB(JSON.stringify(story));
+      console.log('Saved to DB:', resp);
     }catch(error){
       console.error('Error generating story:', error);
+      alert('Error generating story: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    } finally {
+      setLoading(false);
     }
-    //Save database
   }
-  // const SaveInDB=async(output:string)=>{
-  //   const recordId=uuid4();
-  //   try{ 
-  //     const result=await db.insert(StoryData).values({
-  //     storyId:recordId,
-  //     ageGroup:formData?.ageGroup ?? '',
-  //     storyType:formData?.storyType ?? '',
-  //     storySubject:formData?.storySubject ?? '',
-  //     imageStyle:formData?.imageStyle ?? '',
-  //     output: JSON.parse(output),
-  //   }).returning({storyId:StoryData?.storyId})
-  //   return result;
-  //   }
-  //   catch(e){
-
-  //   }
-  // }
-  const SaveInDB=async(output:string)=>{
+ 
+  
+ const SaveInDB=async(output:string)=>{
     try{
       const result = await saveStoryToDB(formData, output);
       return result;
     }catch(error){
       console.error('Error saving story to DB:', error);
-    }
-  }
+     }
+   }
+  
   return (
     <div className='p-10 md:px-20 lg:px-40 bg-[#cad3ff] min-h-screen'>
       <h2 className='text-extrabold text-[70px] text-primary text-center'>CREATE YOUR STORY</h2>
@@ -105,7 +136,7 @@ function CreateStory() {
           Generate Story
         </Button>
       </div>
-      <CustomLoader/>
+      <CustomLoader isLoading={loading}/>
     </div>
   );
 }

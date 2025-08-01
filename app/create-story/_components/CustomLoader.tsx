@@ -10,7 +10,7 @@ import {
 import Image from "next/image";
 import { useEffect } from "react";
 
-export default function App() {
+export default function App({isLoading}:any) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   useEffect(()=>{
     onOpen();
@@ -19,8 +19,8 @@ export default function App() {
 
   return (
     <>
-      <Button onPress={onOpen}>Open Modal</Button>
-      <Modal
+    <div>
+       {isLoading&&<Modal
         isDismissable={false}
         isKeyboardDismissDisabled={true}
         isOpen={isOpen}
@@ -39,7 +39,8 @@ export default function App() {
             </> 
           )}
         </ModalContent>
-      </Modal>
+      </Modal>}
+      </div>
     </>
   );
 }
