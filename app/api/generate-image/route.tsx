@@ -1,25 +1,6 @@
-// import { NextResponse,NextRequest } from "next/server";
-// import Replicate from "replicate";
-
-// export async function POST(req:NextRequest){
-
-//   const data=await req.json();
-//   const {prompt}=data;
-//   const replicate=new Replicate({
-//     auth:process.env.REPLICATE_API_KEY
-//   });
-//   const input={
-//     prompt: prompt,
-//     output_format: 'png',
-//     aspect_ratio: '1:1',
-//     "output_quality": 80,
-//   }
-
-//   const output:any = await replicate.run("black-forest-labs/flux-schnell", { input });
-//   console.log(output);
-//   return NextResponse.json({ "imageUrl": output[0] });
-// }
 import { NextRequest, NextResponse } from "next/server";
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,6 +12,8 @@ export async function POST(req: NextRequest) {
     const formData = new FormData();
     formData.append("prompt", prompt);
     formData.append("output_format", "webp");
+    formData.append("aspect_ratio", "1:1");
+    formData.append("output_quality", "60"); // Reduce quality to decrease file size
 
     const response = await fetch("https://api.stability.ai/v2beta/stable-image/generate/ultra", {
       method: "POST",
@@ -52,19 +35,34 @@ export async function POST(req: NextRequest) {
       }, { status: response.status });
     }
 
-    // Convert image blob to base64
+    // Save image as file instead of base64
     const imageBlob = await response.blob();
     const arrayBuffer = await imageBlob.arrayBuffer();
-    const base64Image = Buffer.from(arrayBuffer).toString('base64');
-    const mimeType = imageBlob.type || 'image/webp';
-    const base64DataUrl = `data:${mimeType};base64,${base64Image}`;
-
-    console.log("Image generated successfully");
+    const buffer = Buffer.from(arrayBuffer);
+    
+    // Generate unique filename
+    const filename = `story-cover-${Date.now()}-${Math.random().toString(36).substring(7)}.webp`;
+    const filepath = join(process.cwd(), 'public', 'generated-images', filename);
+    
+    // Ensure directory exists
+    const { mkdir } = await import('fs/promises');
+    const { dirname } = await import('path');
+    await mkdir(dirname(filepath), { recursive: true });
+    
+    // Write file
+    await writeFile(filepath, buffer);
+    
+    // Return file URL instead of base64
+    const imageUrl = `/generated-images/${filename}`;
+    
+    console.log("Image saved successfully:", imageUrl);
+    console.log("Image size:", imageBlob.size, "bytes");
+    
     return NextResponse.json({ 
-      imageUrl: base64DataUrl, 
-      base64Image: base64Image,
-      mimeType: mimeType,
-      success: true 
+      imageUrl: imageUrl,
+      success: true,
+      size: imageBlob.size,
+      filename: filename
     });
   } catch (err) {
     console.error("Server Error:", err);

@@ -37,11 +37,13 @@
     "firebase": "^12.0.0",
     "framer-motion": "11.18.2",
     "intl-messageformat": "10.7.16",
+    "lucide-react": "^0.535.0",
     "mime": "^4.0.7",
     "next": "^15.4.4",
     "next-themes": "0.4.6",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-pageflip": "^2.0.3",
     "replicate": "^1.0.1",
     "uuid": "^11.1.0",
     "uuid4": "^2.0.3"
