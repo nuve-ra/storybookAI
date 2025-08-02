@@ -5,6 +5,7 @@ import { Button } from '@heroui/button';
 import { ArrowLeft, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import HTMLFlipBook from 'react-pageflip';
 import { getStoryById } from '../../actions/getStories';
+import { IoPlayCircleSharp } from "react-icons/io5";
 
 interface Chapter {
   chapter_number: number;
@@ -117,6 +118,12 @@ function ViewStoryPage() {
   const onFlip = (e: any) => {
     setCurrentPage(e.data);
   };
+  const playSpeech=(text:string)=>{
+    const synth=window.speechSynthesis;
+    const textToSpeech=new SpeechSynthesisUtterance(text);
+    synth.speak(textToSpeech);
+
+  }
 
   if (loading) {
     return (
@@ -212,6 +219,7 @@ function ViewStoryPage() {
             showPageCorners={true}
             disableFlipByClick={false}
             onFlip={onFlip}
+           
             className="shadow-2xl"
             style={{
               background: '#8B4513',
@@ -258,6 +266,11 @@ function ViewStoryPage() {
                   <h3 className="text-lg font-semibold text-amber-800 mb-4 text-center">
                     {chapter.title}
                   </h3>
+                  {/* Audio */}
+                  <span className="absolute bottom-0 right-0 text-primary m-4">
+                              <IoPlayCircleSharp className='text-3xl cursor-pointer' onClick={()=>playSpeech(chapter.text)} />
+                          </span>
+
                 </div>
                 <div className="flex-1 overflow-y-auto">
                   <p className="text-amber-900 leading-relaxed text-sm">

@@ -27,9 +27,9 @@ function Header() {
     const [isMenuOpen,setIsMenuOpen]=useState(false);
     const {user,isSignedIn}=useUser();
   return (
-    <Navbar maxWidth='full'  onMenuOpenChange={{setIsMenuOpen}}>
+    <Navbar maxWidth='full'  onMenuOpenChange={setIsMenuOpen} >
         <NavbarContent>
-            <NavbarMenuToggle arial-label={isMenuOpen ? "Close Menu":"Close Menu"} className='sm:hidden'/>
+            <NavbarMenuToggle aria-label={isMenuOpen ? "Close Menu" : "Open Menu"} className='sm:hidden'/>
             <NavbarBrand>
                 <Image src={'./logo.svg'} alt='logo' height={40} width={40}/>
                 <h2 className='font-bold text text-primary ml-3'>Kidzz Story</h2>

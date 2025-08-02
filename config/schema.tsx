@@ -8,6 +8,7 @@ export const StoryData=pgTable('storyData',{
     ageGroup:varchar('ageGroup'),
     imageStyle:varchar('imageStyle'),
     output:json('output'),
-    coverImage:varchar('coverImage')
+    coverImage:varchar('coverImage'),
+    userEmail: varchar('user_email', { length: 255 }),
 
 }) 

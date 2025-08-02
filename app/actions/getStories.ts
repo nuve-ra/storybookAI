@@ -46,3 +46,19 @@ export const deleteStory = async (storyId: number) => {
     throw new Error('Failed to delete story');
   }
 };
+
+export const getUserStories = async (userEmail: string, limit: number = 3) => {
+  try {
+    const result = await db
+      .select()
+      .from(StoryData)
+      .where(eq(StoryData.userEmail, userEmail))
+      .orderBy(desc(StoryData.id))
+      .limit(limit);
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching user stories:', error);
+    return [];
+  }
+};
