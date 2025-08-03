@@ -24,7 +24,6 @@ export const getStoryById = async (id: string) => {
       .select()
       .from(StoryData)
       .where(eq(StoryData.storyId, id)) // assuming storyId is a string
-      .limit(3);
 
     return result[0] || null;
   } catch (error) {
@@ -53,12 +52,27 @@ export const getUserStories = async (userEmail: string) => {
       .select()
       .from(StoryData)
       .where(eq(StoryData.userEmail, userEmail))
-      .orderBy(desc(StoryData.id))
-      //.limit(limit);
+      .orderBy(desc(StoryData.id));
 
     return result;
   } catch (error) {
     console.error('Error fetching user stories:', error);
+    return [];
+  }
+};
+
+export const getUserStoriesForDashboard = async (userEmail: string) => {
+  try {
+    const result = await db
+      .select()
+      .from(StoryData)
+      .where(eq(StoryData.userEmail, userEmail))
+      .orderBy(desc(StoryData.id))
+      .limit(3);
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching user stories for dashboard:', error);
     return [];
   }
 };

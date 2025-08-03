@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@heroui/button';
 import { BookOpen, Plus, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getUserStories } from '@/app/actions/getStories';
+import { getUserStoriesForDashboard } from '@/app/actions/getStories';
 import { useUser } from '@clerk/nextjs';
 
 interface StoryRecord {
@@ -34,7 +34,7 @@ function UserStoryList() {
     if (!user?.primaryEmailAddress?.emailAddress) return;
     
     try {
-      const userStories = await getUserStories(user.primaryEmailAddress.emailAddress);
+      const userStories = await getUserStoriesForDashboard(user.primaryEmailAddress.emailAddress);
       setStories(userStories);
     } catch (error) {
       console.error('Error fetching stories:', error);
