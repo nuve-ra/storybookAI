@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@heroui/button';
 import { ArrowLeft, BookOpen, Calendar, User, Palette, Type, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getAllStories, deleteStory } from '@/app/actions/getStories';
+import { getUserStories, deleteStory } from '@/app/actions/getStories';
+import { useUser } from '@clerk/nextjs';
 
 interface StoryRecord {
   id: number;
@@ -14,22 +15,31 @@ interface StoryRecord {
   imageStyle: string | null;
   output: any;
   coverImage: string | null;
+  userEmail: string | null;
 }
 
 function YourHistory() {
   const [stories, setStories] = useState<StoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const { user, isSignedIn } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    fetchStories();
-  }, []);
+    if (isSignedIn && user?.primaryEmailAddress?.emailAddress) {
+      fetchStories();
+    } else if (!isSignedIn) {
+      // Redirect to sign-in if not authenticated
+      router.push('/sign-in');
+    }
+  }, [isSignedIn, user]);
 
   const fetchStories = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
+    
     try {
-      const allStories = await getAllStories();
-      setStories(allStories);
+      const userStories = await getUserStories(user.primaryEmailAddress.emailAddress);
+      setStories(userStories);
     } catch (error) {
       console.error('Error fetching stories:', error);
     } finally {

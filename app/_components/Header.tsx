@@ -47,7 +47,7 @@ function Header() {
         <NavbarContent justify='end'>
             <Link href={'/dashboard'}>
             <Button color='primary'>
-                {isSignedIn ? "Dashboared" : "Get Started"}
+                {isSignedIn ? "Dashboard" : "Get Started"}
             </Button>
             </Link>
             <UserButton/>

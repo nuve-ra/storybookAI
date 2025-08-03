@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 import StorySubjectInput from './_components/StorySubjectInput';
 import StoryType from './_components/StoryType';
 import AgeGroup from './_components/AgeGroup';
@@ -10,7 +12,6 @@ import { StoryData } from '@/config/schema';
 import { saveStoryToDB } from '@/app/actions/saveStory';
 import CustomLoader from './_components/CustomLoader';
 import  axios  from 'axios';
-import { useRouter } from 'next/navigation';
 import { BookOpen } from 'lucide-react';
 
 //import { db } from '@/config/db';
@@ -36,12 +37,30 @@ export interface formData {
 function CreateStory() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { user, isLoaded } = useUser();
   const [formData, setFormData] = useState<formData>({
     storySubject: '',
     storyType: '',
     ageGroup: '',
     imageStyle: '',
   });
+
+  // Redirect to sign-in if not authenticated
+  React.useEffect(() => {
+    if (isLoaded && !user) {
+      router.push('/sign-in');
+    }
+  }, [isLoaded, user, router]);
+
+  // Show loading while checking authentication
+  if (!isLoaded) {
+    return <CustomLoader isLoading={true} />;
+  }
+
+  // Don't render if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   const onHandleUserSelection = (data: fieldData) => {
     setFormData((prev) => ({
@@ -123,7 +142,11 @@ function CreateStory() {
   
  const SaveInDB=async(output:string)=>{
     try{
-      const result = await saveStoryToDB(formData, output);
+      const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+      if (!userEmail) {
+        throw new Error('User email not found');
+      }
+      const result = await saveStoryToDB(formData, output, userEmail);
       return result;
     }catch(error){
       console.error('Error saving story to DB:', error);

@@ -24,7 +24,7 @@ export const getStoryById = async (id: string) => {
       .select()
       .from(StoryData)
       .where(eq(StoryData.storyId, id)) // assuming storyId is a string
-      .limit(1);
+      .limit(3);
 
     return result[0] || null;
   } catch (error) {
@@ -47,14 +47,14 @@ export const deleteStory = async (storyId: number) => {
   }
 };
 
-export const getUserStories = async (userEmail: string, limit: number = 3) => {
+export const getUserStories = async (userEmail: string) => {
   try {
     const result = await db
       .select()
       .from(StoryData)
       .where(eq(StoryData.userEmail, userEmail))
       .orderBy(desc(StoryData.id))
-      .limit(limit);
+      //.limit(limit);
 
     return result;
   } catch (error) {

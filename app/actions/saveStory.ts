@@ -4,7 +4,7 @@ import { db } from '@/config/db';
 import { StoryData } from '@/config/schema';
 import { v4 as uuidv4 } from 'uuid';
 
-export const saveStoryToDB = async (formData: any, output: string) => {
+export const saveStoryToDB = async (formData: any, output: string, userEmail: string) => {
   const recordId = uuidv4();
 
   const result = await db
@@ -16,6 +16,7 @@ export const saveStoryToDB = async (formData: any, output: string) => {
       storySubject: formData?.storySubject ?? '',
       imageStyle: formData?.imageStyle ?? '',
       output: JSON.parse(output),
+      userEmail: userEmail, // <-- Important
     })
     .returning({
       storyId: StoryData.storyId,
