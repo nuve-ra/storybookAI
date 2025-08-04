@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
@@ -29,6 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+     
     <html suppressHydrationWarning lang="en">
       <head />
       <body>
@@ -39,5 +41,6 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
+    
   );
 }

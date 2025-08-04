@@ -1,5 +1,7 @@
 'use client'
+import { Button } from '@heroui/button'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 function DashboardHeader() {
@@ -8,6 +10,10 @@ function DashboardHeader() {
     <div className='flex gap-3 items-center'>   
         <Image src={'/capital.png'} width={50} height={50} alt='coin'/>
     <span className='text-2xl'>3 credits</span>
+    <Link href={'/buy-credits'}>
+        <Button className='bg-blue-400' color='secondary'>Buy more credits</Button>
+
+    </Link>
     </div>
     </div>
 

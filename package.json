@@ -28,6 +28,7 @@
     "@heroui/system": "2.4.19",
     "@heroui/theme": "2.4.19",
     "@neondatabase/serverless": "^1.0.1",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@react-aria/ssr": "3.9.9",
     "@react-aria/visually-hidden": "3.8.25",
     "axios": "^1.11.0",
