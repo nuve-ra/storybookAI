@@ -58,17 +58,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const convertImage = async (
+// ✅ Just remove 'export' here
+const convertImage = async (
   imageUrl: string,
 ): Promise<string | null> => {
   try {
     const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-
     return Buffer.from(response.data).toString('base64');
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Error converting image to base64:', error);
-    // eslint-disable-next-line padding-line-between-statements
     return null;
   }
 };
