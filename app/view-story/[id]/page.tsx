@@ -1,11 +1,14 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@heroui/button';
 import { ArrowLeft, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import HTMLFlipBook from 'react-pageflip';
+import { IoPlayCircleSharp } from 'react-icons/io5';
+import Image from 'next/image';
+
 import { getStoryById } from '../../actions/getStories';
-import { IoPlayCircleSharp } from "react-icons/io5";
 
 interface Chapter {
   chapter_number: number;
@@ -51,42 +54,38 @@ function ViewStoryPage() {
       if (!params.id) return;
 
       try {
-        console.log('Fetching story with ID:', params.id);
         const story = await getStoryById(params.id as string);
-        
 
         if (story) {
-          console.log('Story found:', story);
           setStoryData(story);
 
           // Parse the output field to get the actual story structure
           let parsed: ParsedStory = {};
+
           try {
-            parsed = typeof story.output === 'string' 
-              ? JSON.parse(story.output) 
-              : (story.output as ParsedStory) || {};
+            parsed =
+              typeof story.output === 'string'
+                ? JSON.parse(story.output)
+                : (story.output as ParsedStory) || {};
           } catch (parseError) {
-            console.error('Error parsing story output:', parseError);
             parsed = {};
           }
 
           setParsedStory(parsed);
 
           // Set number of pages based on chapters + cover
-          
+
           const chaptersCount = parsed.chapters?.length || 0;
+
           setTotalPages(1 + chaptersCount);
-          
+
           //setTotalPages(1 + (story.chapters?.length || 0));
         } else {
-          console.error('Story not found for ID:', params.id);
-          // Redirect after short delay
           setTimeout(() => {
             router.push('/your-history');
           }, 2000);
         }
       } catch (error) {
-        console.error('Error fetching story:', error);
         // Redirect after short delay
         setTimeout(() => {
           router.push('/your-history');
@@ -118,18 +117,18 @@ function ViewStoryPage() {
   const onFlip = (e: any) => {
     setCurrentPage(e.data);
   };
-  const playSpeech=(text:string)=>{
-    const synth=window.speechSynthesis;
-    const textToSpeech=new SpeechSynthesisUtterance(text);
-    synth.speak(textToSpeech);
+  const playSpeech = (text: string) => {
+    const synth = window.speechSynthesis;
+    const textToSpeech = new SpeechSynthesisUtterance(text);
 
-  }
+    synth.speak(textToSpeech);
+  };
 
   if (loading) {
     return (
       <div className="mh-full-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4" />
           <p className="text-amber-800 text-lg">Loading your story...</p>
         </div>
       </div>
@@ -141,8 +140,12 @@ function ViewStoryPage() {
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
         <div className="text-center">
           <BookOpen className="w-16 h-16 text-amber-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-amber-800 mb-4">Story Not Found</h2>
-          <p className="text-amber-700 mb-6">The story you're looking for doesn't exist or couldn't be loaded.</p>
+          <h2 className="text-2xl font-bold text-amber-800 mb-4">
+            Story Not Found
+          </h2>
+          <p className="text-amber-700 mb-6">
+            The story you are looking for does not exist or could not be loaded.
+          </p>
           <Button color="primary" onClick={handleBackToHistory}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Your Stories
@@ -157,9 +160,9 @@ function ViewStoryPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 max-w-6xl mx-auto">
         <Button
+          className="text-amber-800 hover:bg-amber-200"
           variant="ghost"
           onClick={handleBackToHistory}
-          className="text-amber-800 hover:bg-amber-200"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Stories
@@ -171,20 +174,20 @@ function ViewStoryPage() {
           </span>
           <div className="flex gap-2">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={prevPage}
-              disabled={currentPage === 0}
               className="text-amber-800 hover:bg-amber-200 disabled:opacity-50"
+              disabled={currentPage === 0}
+              size="sm"
+              variant="ghost"
+              onClick={prevPage}
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={nextPage}
-              disabled={currentPage >= totalPages - 1}
               className="text-amber-800 hover:bg-amber-200 disabled:opacity-50"
+              disabled={currentPage >= totalPages - 1}
+              size="sm"
+              variant="ghost"
+              onClick={nextPage}
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -197,48 +200,51 @@ function ViewStoryPage() {
         <div className="relative">
           <HTMLFlipBook
             ref={flipBookRef}
-            width={400}
-            height={600}
-            size="stretch"
-            minWidth={300}
-            maxWidth={500}
-            minHeight={400}
-            maxHeight={700}
-            maxShadowOpacity={0.5}
-            showCover={true}
-            mobileScrollSupport={true}
-            startPage={0}
+            autoSize={true}
+            className="shadow-2xl"
+            clickEventForward={true}
+            disableFlipByClick={false}
             drawShadow={true}
             flippingTime={1000}
-            usePortrait={false}
-            startZIndex={0}
-            autoSize={true}
-            clickEventForward={true}
-            useMouseEvents={true}
-            swipeDistance={30}
+            height={600}
+            maxHeight={700}
+            maxShadowOpacity={0.5}
+            maxWidth={500}
+            minHeight={400}
+            minWidth={300}
+            mobileScrollSupport={true}
+            showCover={true}
             showPageCorners={true}
-            disableFlipByClick={false}
-            onFlip={onFlip}
-           
-            className="shadow-2xl"
+            size="stretch"
+            startPage={0}
+            startZIndex={0}
             style={{
               background: '#8B4513',
               border: '3px solid #654321',
               borderRadius: '10px',
             }}
+            swipeDistance={30}
+            useMouseEvents={true}
+            usePortrait={false}
+            width={400}
+            onFlip={onFlip}
           >
             {/* Cover Page */}
             <div className="bg-gradient-to-br from-amber-100 to-orange-200 p-8 h-full flex flex-col justify-center items-center text-center border-r border-amber-300">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-amber-900 mb-4 leading-tight">
-                  {parsedStory.story_cover?.title || storyData.storySubject || 'Untitled Story'}
+                  {parsedStory.story_cover?.title ||
+                    storyData.storySubject ||
+                    'Untitled Story'}
                 </h1>
                 {parsedStory.story_cover?.image_url && (
-                  <div className="mb-4">
-                    <img
-                      src={parsedStory.story_cover.image_url}
+                  <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden shadow-md">
+                    <Image
+                      fill
                       alt={parsedStory.story_cover.title || 'Story cover'}
-                      className="max-w-full h-48 object-contain mx-auto rounded-lg shadow-md"
+                      className="object-contain"
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      src={parsedStory.story_cover.image_url}
                     />
                   </div>
                 )}
@@ -249,7 +255,9 @@ function ViewStoryPage() {
                 )}
               </div>
               <div className="mt-auto">
-                <p className="text-amber-600 text-sm">Click to start reading →</p>
+                <p className="text-amber-600 text-sm">
+                  Click to start reading →
+                </p>
               </div>
             </div>
 
@@ -268,9 +276,11 @@ function ViewStoryPage() {
                   </h3>
                   {/* Audio */}
                   <span className="absolute bottom-0 right-0 text-primary m-4">
-                              <IoPlayCircleSharp className='text-3xl cursor-pointer' onClick={()=>playSpeech(chapter.text)} />
-                          </span>
-
+                    <IoPlayCircleSharp
+                      className="text-3xl cursor-pointer"
+                      onClick={() => playSpeech(chapter.text)}
+                    />
+                  </span>
                 </div>
                 <div className="flex-1 overflow-y-auto">
                   <p className="text-amber-900 leading-relaxed text-sm">
@@ -278,7 +288,9 @@ function ViewStoryPage() {
                   </p>
                 </div>
                 <div className="mt-4 text-center">
-                  <span className="text-amber-600 text-xs">Page {index + 2}</span>
+                  <span className="text-amber-600 text-xs">
+                    Page {index + 2}
+                  </span>
                 </div>
               </div>
             ))}
@@ -289,7 +301,8 @@ function ViewStoryPage() {
       {/* Instructions */}
       <div className="text-center mt-6 max-w-2xl mx-auto">
         <p className="text-amber-700 text-sm">
-          Click on the pages to flip through the story, or use the navigation buttons above.
+          Click on the pages to flip through the story, or use the navigation
+          buttons above.
         </p>
       </div>
     </div>

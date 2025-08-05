@@ -1,10 +1,20 @@
-"use client";
+'use client';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@heroui/button';
-import { ArrowLeft, BookOpen, Calendar, User, Palette, Type, Trash2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  BookOpen,
+  Calendar,
+  User,
+  Palette,
+  Type,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getUserStories, deleteStory } from '@/app/actions/getStories';
 import { useUser } from '@clerk/nextjs';
+import Image from 'next/image';
+
+import { getUserStories, deleteStory } from '@/app/actions/getStories';
 
 interface StoryRecord {
   id: number;
@@ -36,12 +46,15 @@ function YourHistory() {
 
   const fetchStories = async () => {
     if (!user?.primaryEmailAddress?.emailAddress) return;
-    
+
     try {
-      const userStories = await getUserStories(user.primaryEmailAddress.emailAddress);
+      const userStories = await getUserStories(
+        user.primaryEmailAddress.emailAddress,
+      );
+
       setStories(userStories);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error('Error fetching stories:', error);
     } finally {
       setLoading(false);
     }
@@ -53,17 +66,21 @@ function YourHistory() {
   };
 
   const handleDeleteStory = async (storyId: number) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this story? This action cannot be undone.');
-    
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this story? This action cannot be undone.',
+    );
+
     if (!confirmDelete) return;
 
     setDeletingId(storyId);
     try {
       await deleteStory(storyId);
       // Remove the deleted story from the local state
-      setStories(prevStories => prevStories.filter(story => story.id !== storyId));
+      setStories((prevStories) =>
+        prevStories.filter((story) => story.id !== storyId),
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error('Error deleting story:', error);
       alert('Failed to delete story. Please try again.');
     } finally {
       setDeletingId(null);
@@ -75,7 +92,12 @@ function YourHistory() {
   };
 
   const getStoryTitle = (output: any) => {
-    return output?.story_cover?.title || output?.title || output?.story_title || 'Untitled Story';
+    return (
+      output?.story_cover?.title ||
+      output?.title ||
+      output?.story_title ||
+      'Untitled Story'
+    );
   };
 
   const getCoverImage = (output: any) => {
@@ -91,7 +113,7 @@ function YourHistory() {
     return (
       <div className="min-h-screen bg-[#cad3ff] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
           <p className="text-primary text-lg">Loading your stories...</p>
         </div>
       </div>
@@ -103,16 +125,18 @@ function YourHistory() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={handleBackToCreate}
+          <Button
             className="text-primary hover:bg-primary/10"
+            variant="ghost"
+            onClick={handleBackToCreate}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Create
           </Button>
-          <h1 className="text-4xl md:text-5xl font-bold text-primary">Your History</h1>
-          <div></div>
+          <h1 className="text-4xl md:text-5xl font-bold text-primary">
+            Your History
+          </h1>
+          <div />
         </div>
 
         {/* Stats */}
@@ -120,7 +144,9 @@ function YourHistory() {
           <div className="flex items-center justify-center">
             <div className="text-center">
               <BookOpen className="w-12 h-12 text-primary mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-primary">{stories.length}</h3>
+              <h3 className="text-2xl font-bold text-primary">
+                {stories.length}
+              </h3>
               <p className="text-gray-600">Stories Created</p>
             </div>
           </div>
@@ -130,8 +156,12 @@ function YourHistory() {
         {stories.length === 0 ? (
           <div className="text-center py-12">
             <BookOpen className="w-16 h-16 text-primary mx-auto mb-4 opacity-50" />
-            <h2 className="text-2xl font-bold text-primary mb-4">No Stories Yet</h2>
-            <p className="text-primary mb-6">You haven't created any stories yet. Start your creative journey!</p>
+            <h2 className="text-2xl font-bold text-primary mb-4">
+              No Stories Yet
+            </h2>
+            <p className="text-primary mb-6">
+              You have not created any stories yet. Start your creative journey!
+            </p>
             <Button color="primary" size="lg" onClick={handleBackToCreate}>
               Create Your First Story
             </Button>
@@ -139,14 +169,19 @@ function YourHistory() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stories.map((story) => (
-              <div key={story.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+              <div
+                key={story.id}
+                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+              >
                 {/* Cover Image */}
                 <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
                   {getCoverImage(story.output) ? (
-                    <img 
-                      src={getCoverImage(story.output)} 
+                    <Image
                       alt={getStoryTitle(story.output)}
                       className="w-full h-full object-cover"
+                      height={300} // ← replace with actual dimensions
+                      src={getCoverImage(story.output)}
+                      width={500} // ← replace with actual dimensions
                     />
                   ) : (
                     <BookOpen className="w-16 h-16 text-primary opacity-50" />
@@ -158,7 +193,7 @@ function YourHistory() {
                   <h3 className="text-xl font-bold text-primary mb-2 line-clamp-2">
                     {getStoryTitle(story.output)}
                   </h3>
-                  
+
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center text-sm text-gray-600">
                       <BookOpen className="w-4 h-4 mr-2" />
@@ -184,26 +219,27 @@ function YourHistory() {
 
                   <div className="mb-4">
                     <p className="text-sm text-gray-700 line-clamp-2">
-                      <strong>Subject:</strong> {story.storySubject || 'No subject'}
+                      <strong>Subject:</strong>{' '}
+                      {story.storySubject || 'No subject'}
                     </p>
                   </div>
 
                   <div className="flex justify-between">
-                    <Button 
-                      color="primary" 
+                    <Button
                       className="w-full"
+                      color="primary"
                       onClick={() => handleViewStory(story)}
                     >
                       Read Story
                     </Button>
-                    <Button 
-                      color="danger" 
+                    <Button
                       className="w-full mt-2"
-                      onClick={() => handleDeleteStory(story.id)}
+                      color="danger"
                       disabled={deletingId === story.id}
+                      onClick={() => handleDeleteStory(story.id)}
                     >
                       {deletingId === story.id ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-danger mx-auto mb-4"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-danger mx-auto mb-4" />
                       ) : (
                         <Trash2 className="w-4 h-4 mr-2" />
                       )}
@@ -218,11 +254,11 @@ function YourHistory() {
 
         {/* Footer */}
         <div className="text-center mt-12 pb-8">
-          <Button 
-            color="primary" 
+          <Button
+            className="px-8 py-3"
+            color="primary"
             size="lg"
             onClick={handleBackToCreate}
-            className="px-8 py-3"
           >
             Create New Story
           </Button>

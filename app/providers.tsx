@@ -1,30 +1,25 @@
-"use client";
+'use client';
 
-import type { ThemeProviderProps } from "next-themes";
+import type { ThemeProviderProps } from 'next-themes';
 
-import * as React  from "react";
-import { HeroUIProvider } from "@heroui/system";
-import { useRouter } from "next/navigation";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ClerkProvider, useUser } from "@clerk/nextjs";
-import Header from "./_components/Header";
-import { useState,useEffect } from "react";
-import { db } from "@/config/db";
-import { StoryData, Users } from "@/config/schema";
-import { eq } from "drizzle-orm";
-import { UserDetailContext } from "./_context/UserDetailContext";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import * as React from 'react';
+import { HeroUIProvider } from '@heroui/system';
+import { useRouter } from 'next/navigation';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { ClerkProvider } from '@clerk/nextjs';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
+import Header from './_components/Header';
 
 export interface ProvidersProps {
   children: React.ReactNode;
   themeProps?: ThemeProviderProps;
 }
 
-declare module "@react-types/shared" {
+declare module '@react-types/shared' {
   interface RouterConfig {
     routerOptions: NonNullable<
-      Parameters<ReturnType<typeof useRouter>["push"]>[1]
+      Parameters<ReturnType<typeof useRouter>['push']>[1]
     >;
   }
 }
@@ -40,9 +35,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   // },[user])
   // const saveNewUserIfNotExist=async()=>{
   //   //Check whether the user exist ot rnot
-    // const userResp=await db.select()
-    // .from(Users).where(eq(Users.userEmail,user?.primaryEmailAddress?.emailAddress??''))
-    // console.log("Existing User",userResp);
+  // const userResp=await db.select()
+  // .from(Users).where(eq(Users.userEmail,user?.primaryEmailAddress?.emailAddress??''))
+  // console.log("Existing User",userResp);
 
   //   if(!userResp[0])
   //   {
@@ -64,16 +59,17 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   // }
 
   return (
-  <PayPalScriptProvider options={{ clientId:process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID??'' }}>
-    <HeroUIProvider navigate={router.push}>
-      <ClerkProvider>       
-        <NextThemesProvider {...themeProps}>
-          <Header />
-          {children}
-        </NextThemesProvider>
-      </ClerkProvider>
-    </HeroUIProvider>
-  </PayPalScriptProvider>
-);
-
+    <PayPalScriptProvider
+      options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? '' }}
+    >
+      <HeroUIProvider navigate={router.push}>
+        <ClerkProvider>
+          <NextThemesProvider {...themeProps}>
+            <Header />
+            {children}
+          </NextThemesProvider>
+        </ClerkProvider>
+      </HeroUIProvider>
+    </PayPalScriptProvider>
+  );
 }

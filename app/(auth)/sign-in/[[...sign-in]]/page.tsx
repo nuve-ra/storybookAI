@@ -1,18 +1,21 @@
-import { SignIn } from '@clerk/nextjs'
-import Image from 'next/image'
+import { SignIn } from '@clerk/nextjs';
+import Image from 'next/image';
 
 export default function Page() {
-  return(
-    <div className='grid grid-cols-1 md:grid-cols-2'>
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2">
       <div>
-        <Image src={'/girl.jpg'} alt='login' width={700} height={1000} className='w-full'/>
-
-        </div>
-    <div className='flex justify-center items-center h-screen order-first md:order-last'>
-       <SignIn />
-
+        <Image
+          alt="login"
+          className="w-full"
+          height={1000}
+          src="/girl.jpg"
+          width={700}
+        />
       </div>
-    
+      <div className="flex justify-center items-center h-screen order-first md:order-last">
+        <SignIn />
+      </div>
     </div>
-  )
+  );
 }

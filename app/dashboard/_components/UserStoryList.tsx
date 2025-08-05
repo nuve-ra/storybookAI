@@ -3,8 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@heroui/button';
 import { BookOpen, Plus, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getUserStoriesForDashboard } from '@/app/actions/getStories';
 import { useUser } from '@clerk/nextjs';
+import Image from 'next/image';
+
+import { getUserStoriesForDashboard } from '@/app/actions/getStories';
 
 interface StoryRecord {
   id: number;
@@ -32,19 +34,25 @@ function UserStoryList() {
 
   const fetchStories = async () => {
     if (!user?.primaryEmailAddress?.emailAddress) return;
-    
+
     try {
-      const userStories = await getUserStoriesForDashboard(user.primaryEmailAddress.emailAddress);
+      const userStories = await getUserStoriesForDashboard(
+        user.primaryEmailAddress.emailAddress,
+      );
+
       setStories(userStories);
-    } catch (error) {
-      console.error('Error fetching stories:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const getStoryTitle = (output: any) => {
-    return output?.story_cover?.title || output?.title || output?.story_title || 'Untitled Story';
+    return (
+      output?.story_cover?.title ||
+      output?.title ||
+      output?.story_title ||
+      'Untitled Story'
+    );
   };
 
   const getCoverImage = (output: any) => {
@@ -66,7 +74,7 @@ function UserStoryList() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
@@ -76,19 +84,16 @@ function UserStoryList() {
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-2xl font-bold text-primary">Recent Stories</h3>
         <div className="flex gap-3">
-          <Button 
-            color="primary" 
+          <Button
+            className="text-primary hover:bg-primary/10"
+            color="primary"
             variant="ghost"
             onClick={handleViewAll}
-            className="text-primary hover:bg-primary/10"
           >
             <Eye className="w-4 h-4 mr-2" />
             View All
           </Button>
-          <Button 
-            color="primary"
-            onClick={handleCreateNew}
-          >
+          <Button color="primary" onClick={handleCreateNew}>
             <Plus className="w-4 h-4 mr-2" />
             Create New
           </Button>
@@ -98,13 +103,11 @@ function UserStoryList() {
       {stories.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg shadow-sm">
           <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h4 className="text-xl font-semibold text-gray-600 mb-2">No Stories Yet</h4>
+          <h4 className="text-xl font-semibold text-gray-600 mb-2">
+            No Stories Yet
+          </h4>
           <p className="text-gray-500 mb-6">Create your first magical story!</p>
-          <Button 
-            color="primary" 
-            size="lg"
-            onClick={handleCreateNew}
-          >
+          <Button color="primary" size="lg" onClick={handleCreateNew}>
             <Plus className="w-5 h-5 mr-2" />
             Create Your First Story
           </Button>
@@ -112,14 +115,19 @@ function UserStoryList() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stories.map((story) => (
-            <div key={story.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div
+              key={story.id}
+              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+            >
               {/* Cover Image */}
               <div className="h-40 bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
                 {getCoverImage(story.output) ? (
-                  <img 
-                    src={getCoverImage(story.output)} 
+                  <Image
                     alt={getStoryTitle(story.output)}
                     className="w-full h-full object-cover"
+                    height={300} // Set realistic default height
+                    src={getCoverImage(story.output)}
+                    width={600} // Set realistic default width
                   />
                 ) : (
                   <BookOpen className="w-12 h-12 text-primary opacity-40" />
@@ -131,7 +139,7 @@ function UserStoryList() {
                 <h4 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
                   {getStoryTitle(story.output)}
                 </h4>
-                
+
                 <p className="text-sm text-gray-600 mb-3 line-clamp-1">
                   {story.storySubject || 'No subject'}
                 </p>
@@ -141,10 +149,10 @@ function UserStoryList() {
                   <span>{story.storyType || 'Story'}</span>
                 </div>
 
-                <Button 
-                  color="primary" 
-                  variant="flat"
+                <Button
                   className="w-full"
+                  color="primary"
+                  variant="flat"
                   onClick={() => handleViewStory(story)}
                 >
                   Read Story

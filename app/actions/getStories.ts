@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use server';
+
+import { desc, eq } from 'drizzle-orm';
 
 import { db } from '@/config/db';
 import { StoryData } from '@/config/schema';
-import { desc, eq } from 'drizzle-orm';
 
 export const getAllStories = async () => {
   try {
@@ -13,7 +15,6 @@ export const getAllStories = async () => {
 
     return result;
   } catch (error) {
-    console.error('Error fetching stories:', error);
     return [];
   }
 };
@@ -23,11 +24,10 @@ export const getStoryById = async (id: string) => {
     const result = await db
       .select()
       .from(StoryData)
-      .where(eq(StoryData.storyId, id)) // assuming storyId is a string
+      .where(eq(StoryData.storyId, id)); // assuming storyId is a string
 
     return result[0] || null;
   } catch (error) {
-    console.error('Error fetching story by ID:', error);
     return null;
   }
 };
@@ -41,7 +41,6 @@ export const deleteStory = async (storyId: number) => {
 
     return result[0] || null;
   } catch (error) {
-    console.error('Error deleting story:', error);
     throw new Error('Failed to delete story');
   }
 };
@@ -56,7 +55,6 @@ export const getUserStories = async (userEmail: string) => {
 
     return result;
   } catch (error) {
-    console.error('Error fetching user stories:', error);
     return [];
   }
 };
@@ -72,7 +70,6 @@ export const getUserStoriesForDashboard = async (userEmail: string) => {
 
     return result;
   } catch (error) {
-    console.error('Error fetching user stories for dashboard:', error);
     return [];
   }
 };

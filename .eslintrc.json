@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "quotes": ["warn", "double"],
+    "no-console": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
+  }
+}

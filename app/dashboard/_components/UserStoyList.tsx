@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import React, { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
 
 function UserStoryList() {
   const { user } = useUser();
@@ -11,10 +11,10 @@ function UserStoryList() {
     const getUserStory = async () => {
       if (!user?.primaryEmailAddress?.emailAddress) return;
 
-      const res = await fetch("/action/getStories", {
-        method: "POST",
+      const res = await fetch('/action/getStories', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: user.primaryEmailAddress.emailAddress,
@@ -22,6 +22,7 @@ function UserStoryList() {
       });
 
       const data = await res.json();
+
       setStories(data);
     };
 
