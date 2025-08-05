@@ -18,11 +18,11 @@ function Header() {
         {
             name:'Contact Us',
             path:'/contact'
-        },
-        {
-            name:'Explore Stories',
-            path:'/explore'
         }
+        // {
+        //     name:'Explore Stories',
+        //     path:'/explore'
+        // }
     ]
     const [isMenuOpen,setIsMenuOpen]=useState(false);
     const {user,isSignedIn}=useUser();
