@@ -90,4 +90,5 @@ Enjoy your interactive AI-powered storybook.
 🤝 Contributing
 
 <img width="3994" height="7493" alt="image" src="https://github.com/user-attachments/assets/165cedbb-a20f-4c51-af11-17760b8f93ff" />
+<img width="1113" height="4376" alt="image" src="https://github.com/user-attachments/assets/50dae128-a9bf-40c5-a811-5e8d5531f68a" />
 
