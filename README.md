@@ -89,6 +89,5 @@ Enjoy your interactive AI-powered storybook.
 
 🤝 Contributing
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.
 <img width="3994" height="7493" alt="image" src="https://github.com/user-attachments/assets/165cedbb-a20f-4c51-af11-17760b8f93ff" />
 
